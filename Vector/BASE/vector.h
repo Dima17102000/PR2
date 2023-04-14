@@ -136,6 +136,25 @@ class Vector
    return os;
   }
   
+  iterator begin()
+{
+    return iterator(values);
+}
+
+const_iterator begin() const
+{
+    return const_iterator(values);
+}
+
+iterator end()
+{
+    return iterator(values + sz);
+}
+
+const_iterator end() const
+{
+    return const_iterator(values + sz);
+}
  class Iterator
  {
   public:

@@ -174,7 +174,7 @@ const_iterator end() const
   
   }
   
-  Iterator(pointer ptr_in): ptr{ptr_in}
+  Iterator(pointer ptr): ptr{ptr}
   {
   
   }
@@ -189,30 +189,30 @@ const_iterator end() const
    return ptr;
   }
   
-  bool operator==(const const_iterator& rop)const
+  bool operator==(const const_iterator& other)const
   {
-   return rop == *this;
+   return rop == other.ptr;
   }
   
-  bool operator!=(const const_iterator& rop)const
+  bool operator!=(const const_iterator& other)const
   {
-   return !(*this == rop);
+   return ptr != other.ptr;
   }
   
   iterator& operator++()const
   {
-   this->ptr++;
+   ++ptr;
    return *this;
   }
   
   iterator& operator++(int)const
   {
-   Iterator temp = *this;
-   this->ptr++;
+   Iterator temp(*this);
+   ++ptr;
    return temp;
   }
   
-  operator const_iterator() const
+  operator constiterator() const
   {
    return ConstIterator(ptr);
   }
@@ -237,7 +237,7 @@ const_iterator end() const
   
   }
   
-  ConstIterator(pointer ptr_in): ptr{ptr_in}
+  ConstIterator(pointer ptr): ptr{ptr}
   {
   
   }
@@ -252,26 +252,26 @@ const_iterator end() const
    return ptr;
   }
   
-  bool operator==(const const_iterator& rop)const
+  bool operator==(const const_iterator& other)const
   {
-   return rop == *this;
+   return ptr == other.ptr;
   }
   
   bool operator!=(const const_iterator& rop)const
   {
-   return !(*this == rop);
+   return ptr != other.ptr;
   }
   
   iterator& operator++()const
   {
-   this->ptr++;
+   ++ptr;
    return *this;
   }
   
   iterator& operator++(int)const
   {
-   Iterator temp = *this;
-   this->ptr++;
+   Iterator temp(*this);
+   ++ptr;
    return temp;
   } 
 };

@@ -154,6 +154,7 @@ const_iterator end() const
 {
     return const_iterator(values + sz);
 }
+ 
  class Iterator
  {
   public:
@@ -178,7 +179,7 @@ const_iterator end() const
   
   }
   
-  reference operator*()const
+  reference operator*()const // Iteration
   {
    return *ptr;
   }

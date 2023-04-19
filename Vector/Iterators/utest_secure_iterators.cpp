@@ -190,7 +190,8 @@ TEST_CASE("StronglySecuredIterator, Insert") {
   CHECK_THROWS( it.operator->());
 }
 
-TEST_CASE("StronglySecuredIterator, Erase") {
+TEST_CASE("StronglySecuredIterator, Erase") 
+{
 	Vector v{1,2};
 	auto it{v.begin()};
 	auto loc{it};

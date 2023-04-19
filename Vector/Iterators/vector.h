@@ -25,31 +25,31 @@ class Vector
   pointer values;
  public:
  // Member Functions
-  Vector(): sz{0}, max_sz{min_capacity},values{new value_type[max_sz]}
+ Vector(): sz{0}, max_sz{min_capacity},values{new value_type[max_sz]}
   {
   }
   
-  Vector(size_type n): sz{n}, max_sz{n > min_capacity? n : min_capacity}, values{new value_type[max_sz]}
-  {
+ Vector(size_type n): sz{n}, max_sz{n > min_capacity? n : min_capacity}, values{new value_type[max_sz]}
+ {
   
-  }
+ }
   
-  Vector(std::initializer_list<value_type> lst): sz{lst.size()}, max_sz{sz > min_capacity? sz : min_capacity}, values{new value_type[max_sz]}
-  {
+ Vector(std::initializer_list<value_type> lst): sz{lst.size()}, max_sz{sz > min_capacity? sz : min_capacity}, values{new value_type[max_sz]}
+{
    std:: copy(lst.begin(), lst.end(), values);
-  } 
-  Vector(const Vector& other): sz{other.sz},max_sz{other.max_sz}, values{new value_type[max_sz]}
-  {
+} 
+ Vector(const Vector& other): sz{other.sz},max_sz{other.max_sz}, values{new value_type[max_sz]}
+{
    std::copy(other.values, other.values + other.sz, values);
-  }
+}
   
-  ~Vector()
-  {
+ ~Vector()
+ {
    delete[]values;
-  }
+ }
   
-  Vector& operator=(const Vector& other) 
-  {
+ Vector& operator=(const Vector& other) 
+ {
     if (this != &other) 
     {
     delete[] values;
@@ -59,24 +59,25 @@ class Vector
     std::copy(other.values, other.values + sz, values);
     }
     return *this;
-   }
+ }
    
-  size_type size()const
-  {
+ size_type size()const
+ {
    return sz;
-  }
+ }
   
-  bool empty()const
-  {
+ bool empty()const
+ {
    return sz == 0;
-  }
+ }
   
-  void clear()
-  {
+ void clear()
+ {
    sz = 0;
-  }
-  void reserve(size_type n)
-  {
+ }
+  
+ void reserve(size_type n)
+ {
     if(n > max_sz)
     {
      pointer new_values = new value_type[n];
@@ -85,10 +86,10 @@ class Vector
      values = new_values;
      max_sz = n;
     }
-  }
+ }
   
-  void shrink_to_fit()
-  {
+ void shrink_to_fit()
+ {
    if(sz < max_sz)
     {
     max_sz = sz;
@@ -97,47 +98,51 @@ class Vector
     delete[]values;
     values = new_values;
     }
-  }
-  void push_back(value_type x)
-  {
+ }
+ 
+ void push_back(value_type x)
+ {
    if(sz == max_sz)
    {
     reserve(max_sz * 2);
    }
    values[sz++] = x;
-  }
-  void pop_back()
-  {
+ }
+ 
+ void pop_back()
+ {
    if(empty())
    {
     throw std::runtime_error("index out of bounds");
    }
    sz--;
-  }
-  value_type& operator[](size_type index)
-  {
+ }
+ 
+ value_type& operator[](size_type index)
+{
    if(index >= sz)
    {
     throw std::runtime_error("index out of bounds");
    }
    return values[index];
-  }
-  const value_type& operator[](size_type index)const
-  {
+}
+
+const value_type& operator[](size_type index)const
+{
    if(index >= sz)
    {
     throw std::runtime_error("index out of bounds");
    }
    return values[index];
-  }
+}
   
   size_type capacity()const
-  {
+{
    return max_sz;
-  }
+}
   
-  friend std::ostream& operator<<(std:: ostream& os, const Vector& vec)
-  {
+friend std::ostream& operator<<(std:: ostream& os, const Vector& vec)
+{
    os << "[";
    for(size_type i{0}; i < vec.sz; i++)
    {
@@ -149,8 +154,9 @@ class Vector
    }
    os << "]";
    return os;
-  }
-  iterator begin()
+}
+
+iterator begin()
 {
     return iterator(values);
 }
@@ -170,8 +176,8 @@ const_iterator end() const
     return const_iterator(values + sz);
 }
  
- class Iterator
- {
+class Iterator
+{
   public:
   using value_type = Vector:: value_type;
   using reference = Vector:: reference;
@@ -184,57 +190,57 @@ const_iterator end() const
   public: 
   // Member functions
     
-  Iterator(): ptr{nullptr}
-  {
+ Iterator(): ptr{nullptr}
+ {
   
-  }
+ }
   
-  Iterator(pointer ptr_in): ptr{ptr_in}
-  {
+ Iterator(pointer ptr_in): ptr{ptr_in}
+ {
   
-  }
+ }
   
-  reference operator*()const // Iteration
-  {
+ reference operator*()const // Iteration
+ {
    return *ptr;
-  }
+ }
   
-  pointer operator->()const
-  {
+ pointer operator->()const
+ {
    return ptr;
-  }
+ }
   
-  bool operator==(const const_iterator& rop)const
-  {
+ bool operator==(const const_iterator& rop)const
+ {
    return rop == *this;
-  }
+ }
   
-  bool operator!=(const const_iterator& rop)const
-  {
+ bool operator!=(const const_iterator& rop)const
+ {
    return !(*this == rop);
-  }
+ }
   
-  Iterator& operator++()
-  {
-   ++ptr;
-   return *this;
-  }
+ Iterator& operator++()
+ {
+  ++ptr;
+  return *this;
+ }
   
-  Iterator operator++(int)
-  {
-   Iterator temp = *this;
-   ++(*this);
-   return temp;
-  }
+ Iterator operator++(int)
+ {
+  Iterator temp = *this;
+  ++(*this);
+  return temp;
+ }
   
-  operator ConstIterator() const
-  {
+ operator ConstIterator() const
+ {
    return ConstIterator(ptr);
-  }
+ }
 };
  
- class ConstIterator
- {
+class ConstIterator
+{
   public:
   using value_type = Vector:: value_type;
   using reference = Vector:: reference;
@@ -247,48 +253,53 @@ const_iterator end() const
   public: 
   // Member functions
   
-  ConstIterator(): ptr{nullptr}
-  {
+ ConstIterator(): ptr{nullptr}
+ {
   
-  }
+ }
   
-  ConstIterator(pointer ptr_in): ptr{ptr_in}
-  {
+ ConstIterator(pointer ptr_in): ptr{ptr_in}
+ {
   
-  }
+ }
   
-  reference operator*()const
-  {
+ reference operator*()const
+ {
    return *ptr;
-  }
+ }
   
-  pointer operator->()const
-  {
+ pointer operator->()const
+ {
    return ptr;
-  }
+ }
   
-  bool operator==(const const_iterator& other)const
-  {
+ bool operator==(const const_iterator& other)const
+ {
    return ptr == other.ptr;
-  }
+ }
   
-  bool operator!=(const const_iterator& other)const
-  {
+ bool operator!=(const const_iterator& other)const
+ {
    return ptr != other.ptr;
-  }
+ }
   
-  const_iterator& operator++()
-  {
+ const_iterator& operator++()
+ {
    ++ptr;
    return *this;
-  }
+ }
   
-  const_iterator operator++(int)
-  {
+ const_iterator operator++(int)
+ {
    ConstIterator temp = *this;
    ++(*this);
    return temp;
-  } 
+ }
+   
+ friend difference_type  operator-(const Vector:: ConstIterator& lop,const Vector:: ConstIterator& rop) 
+{
+  return  lop.ptr-rop.ptr;
+}
 };
 
 iterator  insert(const_iterator pos,const_reference val) 
@@ -319,10 +330,6 @@ values[i]=values[i+1];
 return  iterator{values+current};
 }
 
-friend difference_type  operator-(const Vector:: ConstIterator& lop,const Vector:: ConstIterator& rop) 
-{
-  return  lop.ptr-rop.ptr;
-}
 
 };
 #endif

@@ -1,3 +1,5 @@
+#ifndef VECTOR_H
+#define VECTOR_H
 #include <iostream>
 
 
@@ -46,6 +48,19 @@ class Vector
    delete[]values;
   }
   
+  Vector& operator=(const Vector& other) 
+  {
+    if (this != &other) 
+    {
+    delete[] values;
+    values = new double[other.max_sz];
+    sz = other.sz;
+    max_sz = other.max_sz;
+    std::copy(other.values, other.values + sz, values);
+    }
+    return *this;
+   }
+   
   size_type size()const
   {
    return sz;
@@ -199,20 +214,20 @@ const_iterator end() const
    return !(*this == rop);
   }
   
-  iterator& operator++()const
+  Iterator& operator++()
   {
-   this->ptr++;
+   ++ptr;
    return *this;
   }
   
-  iterator& operator++(int)const
+  Iterator operator++(int)
   {
    Iterator temp = *this;
-   this->ptr++;
+   ++(*this);
    return temp;
   }
   
-  operator const_iterator() const
+  operator ConstIterator() const
   {
    return ConstIterator(ptr);
   }
@@ -252,40 +267,40 @@ const_iterator end() const
    return ptr;
   }
   
-  bool operator==(const const_iterator& rop)const
+  bool operator==(const const_iterator& other)const
   {
-   return rop == *this;
+   return ptr == other.ptr;
   }
   
-  bool operator!=(const const_iterator& rop)const
+  bool operator!=(const const_iterator& other)const
   {
-   return !(*this == rop);
+   return ptr != other.ptr;
   }
   
-  iterator& operator++()const
+  const_iterator& operator++()
   {
-   this->ptr++;
+   ++ptr;
    return *this;
   }
   
-  iterator& operator++(int)const
+  const_iterator operator++(int)
   {
-   Iterator temp = *this;
-   this->ptr++;
+   ConstIterator temp = *this;
+   ++(*this);
    return temp;
   } 
 };
 
 iterator  insert(const_iterator pos,const_reference val) 
 {
-auto  diff = pos−begin();
+auto  diff = pos-begin();
 if(diff<0 || static_cast<size_type>(diff)>sz)
 throw  std::runtime_error ( "Iterator out of bounds");
 size_type  current{static_cast<size_type>(diff)};
 if(sz>=max_sz)
-reserve(max_sz ∗ 2 ); // Attention special  case,if no minimum  size  is  defined
+reserve(max_sz * 2 ); // Attention special  case,if no minimum  size  is  defined
 
-for(auto i{sz}; i−−> current;)
+for(auto i{sz}; i--> current;)
 values[i+1] = values[i];
 values[current] = val;
 ++sz;
@@ -294,14 +309,20 @@ return iterator{values + current};
 
 iterator erase(const_iterator pos) 
 {
-auto diff = pos−begin();
+auto diff = pos-begin();
 if(diff<0 || static_cast<size_type>(diff)>= sz)
 throw std::runtime_error("Iterator out of bounds");
 size_type  current{static_cast<size_type>(diff)};
-for(auto  i{current};i<sz−1;++i)
+for(auto  i{current};i<sz-1;++i)
 values[i]=values[i+1];
-−−sz;
+--sz;
 return  iterator{values+current};
 }
+
+friend difference_type  operator-(const Vector:: ConstIterator& lop,const Vector:: ConstIterator& rop) 
+{
+  return  lop.ptr-rop.ptr;
+}
+
 };
-};
+#endif

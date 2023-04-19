@@ -46,6 +46,16 @@ class Vector
    delete[]values;
   }
   
+  Vector& operator=(const Vector& other) {
+        if (this != &other) {
+            delete[] values;
+            values = new double[other.max_sz];
+            sz = other.sz;
+            max_sz = other.max_sz;
+            std::copy(other.values, other.values + sz, values);
+        }
+        return *this;
+    }
   size_type size()const
   {
    return sz;
@@ -135,173 +145,4 @@ class Vector
    os << "]";
    return os;
   }
-  
-  iterator begin() // Hello World
-{
-    return iterator(values);
-}
-
-const_iterator begin() const
-{
-    return const_iterator(values);
-}
-
-iterator end()
-{
-    return iterator(values + sz);
-}
-
-const_iterator end() const
-{
-    return const_iterator(values + sz);
-}
- class Iterator
- {
-  public:
-  using value_type = Vector:: value_type;
-  using reference = Vector:: reference;
-  using pointer = Vector:: pointer;
-  using difference_type = Vector:: difference_type;
-  using iterator_category = std:: forward_iterator_tag;
-  private:
-  //Instance variables
-  pointer ptr;
-  public: 
-  // Member functions
-    
-  Iterator(): ptr{nullptr}
-  {
-  
-  }
-  
-  Iterator(pointer ptr): ptr{ptr}
-  {
-  
-  }
-  
-  reference operator*()const
-  {
-   return *ptr;
-  }
-  
-  pointer operator->()const
-  {
-   return ptr;
-  }
-  
-  bool operator==(const const_iterator& other)const
-  {
-   return rop == other.ptr;
-  }
-  
-  bool operator!=(const const_iterator& other)const
-  {
-   return ptr != other.ptr;
-  }
-  
-  iterator& operator++()const
-  {
-   ++ptr;
-   return *this;
-  }
-  
-  iterator& operator++(int)const
-  {
-   Iterator temp(*this);
-   ++ptr;
-   return temp;
-  }
-  
-  operator constiterator() const
-  {
-   return ConstIterator(ptr);
-  }
-};
- 
- class ConstIterator
- {
-  public:
-  using value_type = Vector:: value_type;
-  using reference = Vector:: reference;
-  using pointer = Vector:: pointer;
-  using difference_type = Vector:: difference_type;
-  using iterator_category = std:: forward_iterator_tag;
-  private:
-  //Instance variables
-  pointer ptr;
-  public: 
-  // Member functions
-  
-  ConstIterator(): ptr{nullptr}
-  {
-  
-  }
-  
-  ConstIterator(pointer ptr): ptr{ptr}
-  {
-  
-  }
-  
-  reference operator*()const
-  {
-   return *ptr;
-  }
-  
-  pointer operator->()const
-  {
-   return ptr;
-  }
-  
-  bool operator==(const const_iterator& other)const
-  {
-   return ptr == other.ptr;
-  }
-  
-  bool operator!=(const const_iterator& rop)const
-  {
-   return ptr != other.ptr;
-  }
-  
-  iterator& operator++()const
-  {
-   ++ptr;
-   return *this;
-  }
-  
-  iterator& operator++(int)const
-  {
-   Iterator temp(*this);
-   ++ptr;
-   return temp;
-  } 
-};
-
-iterator  insert(const_iterator pos,const_reference val) 
-{
-auto  diff = pos−begin();
-if(diff<0 || static_cast<size_type>(diff)>sz)
-throw  std::runtime_error ( "Iterator out of bounds");
-size_type  current{static_cast<size_type>(diff)};
-if(sz>=max_sz)
-reserve(max_sz ∗ 2 ); // Attention special  case,if no minimum  size  is  defined
-
-for(auto i{sz}; i−−> current;)
-values[i+1] = values[i];
-values[current] = val;
-++sz;
-return iterator{values + current};
-}
-
-iterator erase(const_iterator pos) 
-{
-auto diff = pos−begin();
-if(diff<0 || static_cast<size_type>(diff)>= sz)
-throw std::runtime_error("Iterator out of bounds");
-size_type  current{static_cast<size_type>(diff)};
-for(auto  i{current};i<sz−1;++i)
-values[i]=values[i+1];
-−−sz;
-return  iterator{values+current};
-}
- };
 };

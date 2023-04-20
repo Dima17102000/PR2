@@ -8,9 +8,9 @@ TEST_CASE("SecureIterator, EndIterator")
   auto end{v.end()};
 
   CHECK_NOTHROW( ++end );
-  CHECK( end == v.end() );
+  CHECK( end == v.end() ); 
   CHECK_NOTHROW( end++ );
-  CHECK( end == v.end() );
+  CHECK( end == v.end() ); 
   CHECK_THROWS( *end );
   CHECK_THROWS( end.operator->());
 
@@ -19,7 +19,7 @@ TEST_CASE("SecureIterator, EndIterator")
   CHECK_NOTHROW( v.end()++ );
   CHECK( end == v.end()++ );
   CHECK_THROWS( *v.end() );
-  CHECK_THROWS( v.end().operator->());
+  CHECK_THROWS( v.end().operator->()); 
 
 }
 
@@ -179,7 +179,7 @@ TEST_CASE("StronglySecuredConstIterator, Realloc") {
   CHECK_THROWS( *it );
   CHECK_THROWS( it.operator->());
 }
-/*
+
 TEST_CASE("StronglySecuredIterator, Insert") {
 	Vector v(2);
 	v.push_back(7.5);
@@ -205,4 +205,4 @@ TEST_CASE("StronglySecuredIterator, Erase")
 	CHECK_THROWS( *it );
   CHECK_THROWS( it.operator->());
 }
-*/
+

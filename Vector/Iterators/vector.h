@@ -158,7 +158,10 @@ friend std::ostream& operator<<(std:: ostream& os, const Vector& vec)
 
 iterator begin()
 {
-    return iterator(values);
+  if(sz == 0)
+    return this->end();
+    
+  return iterator(values);
 }
 
 const_iterator begin() const
@@ -190,12 +193,8 @@ class Iterator
   public: 
   // Member functions
     
- Iterator(): ptr{nullptr}
- {
   
- }
-  
- Iterator(pointer ptr_in): ptr{ptr_in}
+ Iterator(pointer ptr_in=nullptr): ptr{ptr_in}
  {
   
  }
@@ -222,6 +221,8 @@ class Iterator
   
  Iterator& operator++()
  {
+ if(ptr == nullptr)
+    return *this;
   ++ptr;
   return *this;
  }

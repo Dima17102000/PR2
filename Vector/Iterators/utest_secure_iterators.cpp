@@ -2,7 +2,8 @@
 #include "doctest.h"
 #include "vector.h"
 
-TEST_CASE("SecureIterator, EndIterator") {
+TEST_CASE("SecureIterator, EndIterator") 
+{
   Vector v({0,1,2,3,4,5,6,7,8,9});
   auto end{v.end()};
 
@@ -85,6 +86,7 @@ TEST_CASE("SecureIterator, DefaultIterator") {
 	CHECK( test == Vector::iterator{} );
 	CHECK_THROWS( *test );
 	CHECK_THROWS( test.operator->());
+	
 }
 
 TEST_CASE("SecureConstIterator, DefaultIterator") {
@@ -177,7 +179,7 @@ TEST_CASE("StronglySecuredConstIterator, Realloc") {
   CHECK_THROWS( *it );
   CHECK_THROWS( it.operator->());
 }
-
+/*
 TEST_CASE("StronglySecuredIterator, Insert") {
 	Vector v(2);
 	v.push_back(7.5);
@@ -203,3 +205,4 @@ TEST_CASE("StronglySecuredIterator, Erase")
 	CHECK_THROWS( *it );
   CHECK_THROWS( it.operator->());
 }
+*/

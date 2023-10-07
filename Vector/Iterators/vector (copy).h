@@ -171,12 +171,12 @@ const_iterator begin() const
 
 iterator end()
 {
-    return iterator(values+sz,values+sz);
+    return iterator(values + sz,values+sz);
 }
 
 const_iterator end() const
 {
-    return const_iterator(values+sz,values + sz);
+    return const_iterator(values + sz,values+sz);
 }
  
 class Iterator
@@ -194,25 +194,21 @@ class Iterator
   public: 
   // Member functions
     
- Iterator()
- {
-  ptr = nullptr;
-  end = nullptr;
- } 
+  Iterator()
+  {
+   ptr = nullptr;
+   end = nullptr;
+  }
+  
  Iterator(pointer ptr,pointer end)
- {
-  this->ptr = ptr;
-  this->end = end;
- }
- Iterator(pointer ptr)
- {
-  this->ptr = ptr;
-  this->end = nullptr;
- }
+  {
+   this->ptr = ptr;
+   this->end = end;
+  }
   
  reference operator*()const // Iteration
  {
-   if(ptr >= end)
+   if(ptr == end)
    {
     throw std::runtime_error("");
    }
@@ -221,36 +217,34 @@ class Iterator
   
  pointer operator->()const
  {
-   if(ptr >= end)
+   if(ptr == end)
    {
     throw std::runtime_error("");
    }
    return ptr;
  }
   
- bool operator==(const Iterator& other)const
+ bool operator==(const const_iterator& rop)const
  {
-   return ptr == other.ptr;
+   return rop == *this;
  }
   
- bool operator!=(const Iterator& other)const
+ bool operator!=(const const_iterator& rop)const
  {
-   return ptr != other.ptr;
+   return !(*this == rop);
  }
   
  Iterator& operator++()
  {
- if(ptr >= end)
- {
-  return *this;
- }
-  ++ptr;
+  if(ptr != end)
+  {
+   ++ptr;
+  }
   return *this;
  }
   
  Iterator operator++(int)
  {
-  
   Iterator temp = *this;
   ++(*this);
   return temp;
@@ -258,7 +252,7 @@ class Iterator
   
  operator ConstIterator() const
  {
-   return ConstIterator(ptr);
+   return ConstIterator(ptr,end);
  }
 };
  
@@ -278,24 +272,19 @@ class ConstIterator
   // Member functions
   
  ConstIterator()
- {
-  ptr = nullptr;
-  end = nullptr;
- }
-  
- ConstIterator(pointer ptr)
- {
-  this->ptr = ptr;
-  this->end = nullptr;
- }
- ConstIterator(pointer ptr,pointer end)
+  {
+   ptr = nullptr;
+   end = nullptr;
+  }
+ ConstIterator(pointer ptr, pointer end)
  {
   this->ptr = ptr;
   this->end = end;
- } 
+ }
+  
  reference operator*()const
  {
-   if(ptr >= end)
+   if(ptr == end)
    {
     throw std::runtime_error("");
    }
@@ -304,36 +293,34 @@ class ConstIterator
   
  pointer operator->()const
  {
-   if(ptr >= end)
+   if(ptr == end)
    {
     throw std::runtime_error("");
    }
    return ptr;
  }
   
- bool operator==(const ConstIterator& other)const
+ bool operator==(const const_iterator& other)const
  {
    return ptr == other.ptr;
  }
   
- bool operator!=(const ConstIterator& other)const
+ bool operator!=(const const_iterator& other)const
  {
    return ptr != other.ptr;
  }
   
- ConstIterator& operator++()
+ const_iterator& operator++()
  {
-   if(ptr >= end)
+   if(ptr != end)
    {
-    return *this;
+    ++ptr;
    }
-   ++ptr;
    return *this;
  }
   
- ConstIterator operator++(int)
+ const_iterator operator++(int)
  {
-   
    ConstIterator temp = *this;
    ++(*this);
    return temp;
@@ -348,35 +335,33 @@ class ConstIterator
 iterator  insert(const_iterator pos,const_reference val) 
 {
 auto  diff = pos-begin();
-if(diff<0 || static_cast<size_type>(diff) >= sz)
+if(diff<0 || static_cast<size_type>(diff)>sz)
 throw  std::runtime_error ( "Iterator out of bounds");
 size_type  current{static_cast<size_type>(diff)};
-if(sz >= max_sz)
-reserve(max_sz * 2); // Attention special  case,if no minimum  size  is  defined
+if(sz>=max_sz)
+reserve(max_sz * 2 ); // Attention special  case,if no minimum  size  is  defined
 
-for(auto i{sz}; i-->current;)
-{
+for(auto i{sz}; i--> current;)
 values[i+1] = values[i];
-}
 values[current] = val;
 ++sz;
-return iterator{values + current};
+return iterator{values + current,values+sz};
 }
 
 iterator erase(const_iterator pos) 
 {
 auto diff = pos-begin();
-if(diff<0 || static_cast<size_type>(diff) >= sz)
+if(diff<0 || static_cast<size_type>(diff)>= sz)
 throw std::runtime_error("Iterator out of bounds");
 size_type  current{static_cast<size_type>(diff)};
-for(auto i{current};i<sz-1;++i)
-{
+for(auto  i{current};i<sz-1;++i)
 values[i]=values[i+1];
-}
 --sz;
-return  iterator{values+current};
+return  iterator{values+current,values+sz};
 }
 
 
 };
 #endif
+ 
+

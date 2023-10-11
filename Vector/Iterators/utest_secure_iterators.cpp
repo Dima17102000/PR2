@@ -188,6 +188,7 @@ TEST_CASE("StronglySecuredIterator, Insert") {
 	CHECK( it == v.end());
 	CHECK_THROWS( *it );
   CHECK_THROWS( it.operator->());
+  
 }
 
 TEST_CASE("StronglySecuredIterator, Erase") {
@@ -309,3 +310,4 @@ TEST_CASE("StronglySecuredIterator, Erase")
 	CHECK( it == v.end());
 	CHECK_THROWS( *it );
 }
+

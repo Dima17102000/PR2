@@ -171,12 +171,12 @@ const_iterator begin() const
 
 iterator end()
 {
-    return iterator(values+sz,values+sz,this);
+    return iterator(values+sz,values,this);
 }
 
 const_iterator end() const
 {
-    return ConstIterator(values+sz,values + sz,this);
+    return ConstIterator(values+sz,values,this);
 }
  
 class Iterator
@@ -207,12 +207,18 @@ class Iterator
   //ptr end
   //origin->values
   //origin->sz
+  if (origin == nullptr || ptr < origin->values || ptr >= origin->values + origin->sz)
+  {
+        return false;  // Iterator is not valid if origin is null
+  }
   auto val = origin->values;
   auto sz = origin->sz;
+  
   if(ptr == end)
   {
    return false;
   }
+  
   if(val == nullptr)
   {
   return true;
@@ -348,6 +354,10 @@ class ConstIterator
   //ptr end
   //origin->values
   //origin->sz
+  if (origin == nullptr || ptr < origin->values || ptr >= origin->values + origin->sz)
+  {
+    return false;  // Iterator is not valid if origin is null
+  }
   auto val = origin->values;
   auto sz = origin->sz;
   if(ptr == end)

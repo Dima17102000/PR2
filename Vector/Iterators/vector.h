@@ -213,7 +213,7 @@ class Iterator
   }
   auto val = origin->values;
   auto sz = origin->sz;
-  
+   
   if(ptr == end)
   {
    return false;
@@ -223,15 +223,18 @@ class Iterator
   {
   return true;
   }
+  
   if (!(val <= ptr && ptr <= val +sz))
   {
     //iterator is not valid
     return false;
   }
+  
   if(end != val + sz)
   {
    const_cast<Iterator*>(this)->end = val + sz;
   }
+  
   return true; 
  }
  
@@ -285,7 +288,7 @@ class Iterator
   
  Iterator& operator++()
  {
- if(ptr >= end && !(is_valid()))
+ if(ptr >= end || !(is_valid()))
  {
   return *this;
  }
@@ -409,7 +412,7 @@ class ConstIterator
   
  ConstIterator& operator++()
  {
-   if(ptr >= end && !(is_valid()))
+   if(ptr >= end || !(is_valid()))
    {
     return *this;
    }

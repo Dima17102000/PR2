@@ -161,22 +161,22 @@ iterator begin()
   if(sz == 0)
     return this->end();
     
-  return iterator(values,this);
+  return iterator(values,values+sz,this);
 }
 
 const_iterator begin() const
 {
-    return ConstIterator(values,this);
+    return ConstIterator(values,values+sz,this);
 }
 
 iterator end()
 {
-    return iterator(values+sz,this);
+    return iterator(values+sz,values,this);
 }
 
 const_iterator end() const
 {
-    return ConstIterator(values+sz,this);
+    return ConstIterator(values+sz,values,this);
 }
  
 class Iterator
@@ -189,16 +189,17 @@ class Iterator
   using iterator_category = std:: forward_iterator_tag;
   private:
   //Instance variables
-    pointer ptr;
-    Vector* origin;
-  
+  pointer ptr;
+  pointer end;
+  Vector* origin;
   public: 
   // Member functions
     
  Iterator()
  {
-   ptr = nullptr;
-   origin = nullptr;
+  ptr = nullptr;
+  end = nullptr;
+  origin = nullptr;
  } 
  
  bool is_valid()const
@@ -206,75 +207,93 @@ class Iterator
   //ptr end
   //origin->values
   //origin->sz
-   if (origin == nullptr || ptr < origin->values || ptr >= origin->values + origin->sz)
+  if (origin == nullptr || ptr < origin->values || ptr >= origin->values + origin->sz)
   {
         return false;  // Iterator is not valid if origin is null
   }
-   auto val = origin->values;
-   auto sz = origin->sz;
+  auto val = origin->values;
+  auto sz = origin->sz;
    
-  
+  if(ptr == end)
+  {
+   return false;
+  }
   
   if(val == nullptr)
   {
-    return true;
+  return true;
   }
   
   if (!(val <= ptr && ptr <= val +sz))
   {
     //iterator is not valid
-     return false;
+    return false;
   }
-   return true; 
+  
+  if(end != val + sz)
+  {
+   const_cast<Iterator*>(this)->end = val + sz;
+  }
+  
+  return true; 
  }
  
+ Iterator(pointer ptr,pointer end)
+ {
+  this->ptr = ptr;
+  this->end = end;
+  this->origin = nullptr;
+ }
  Iterator(pointer ptr)
  {
-   this->ptr = ptr;
-   this->origin = nullptr;
+  this->ptr = ptr;
+  this->end = nullptr;
+  this->origin = nullptr;
  }
  
- Iterator(pointer ptr,Vector* v)
+ Iterator(pointer ptr,pointer end, Vector* v)
  {
-   this->ptr = ptr;
-   this->origin = v;
+  this->ptr = ptr;
+  this->end = end;
+  this->origin = v;
  }
   
  reference operator*()const // Iteration
  {
-   if(!(is_valid()))
+   if(ptr >= end || !(is_valid()))
    {
-     throw std::runtime_error("");
+    throw std::runtime_error("");
    }
-    return *ptr;
+   return *ptr;
  }
   
  pointer operator->()const
  {
-   if(!(is_valid()))
+   if(ptr >= end || !(is_valid()))
    {
-     throw std::runtime_error("");
+    throw std::runtime_error("");
    }
-    return ptr;
+   return ptr;
  }
   
  bool operator==(const const_iterator& other)const
  {
-    return other == *this;
+   return other == *this;
  }
   
  bool operator!=(const const_iterator& other)const
  {
-    return !(*this == other);
+   return !(*this == other);
  }
   
  Iterator& operator++()
  {
-  if((is_valid()))
-  {
-   ++ptr;
-  }
-   return *this;
+ if(ptr >= end || !(is_valid()))
+ {
+  return *this;
+ }
+  ++ptr;
+  return *this;
  }
   
  Iterator operator++(int)
@@ -287,7 +306,7 @@ class Iterator
   
  operator ConstIterator() const
  {
-   return ConstIterator(ptr,origin);
+   return ConstIterator(ptr,end,origin);
  }
 };
  
@@ -301,27 +320,36 @@ class ConstIterator
   using iterator_category = std:: forward_iterator_tag;
   private:
   //Instance variables
-   pointer ptr;
-   const Vector* origin;
+  pointer ptr;
+  pointer end;
+  const Vector* origin;
   public: 
   // Member functions
   
  ConstIterator()
  {
-   ptr = nullptr;
-   origin = nullptr;
+  ptr = nullptr;
+  end = nullptr;
+  origin = nullptr;
  }
   
  ConstIterator(pointer ptr)
  {
-   this->ptr = ptr;
-   this->origin = nullptr;
+  this->ptr = ptr;
+  this->end = nullptr;
+  this->origin = nullptr;
  }
- 
- ConstIterator(pointer ptr,const Vector* v)
+ ConstIterator(pointer ptr,pointer end)
  {
-   this->ptr = ptr;
-   this->origin = v;
+  this->ptr = ptr;
+  this->end = end;
+  this->origin = nullptr;
+ }
+ ConstIterator(pointer ptr,pointer end,const Vector* v)
+ {
+  this->ptr = ptr;
+  this->end = end;
+  this->origin = v;
  }
  
  bool is_valid()const
@@ -329,61 +357,67 @@ class ConstIterator
   //ptr end
   //origin->values
   //origin->sz
-   if (origin == nullptr || ptr < origin->values || ptr >= origin->values + origin->sz)
+  if (origin == nullptr || ptr < origin->values || ptr >= origin->values + origin->sz)
   {
-     return false;  // Iterator is not valid if origin is null
+    return false;  // Iterator is not valid if origin is null
   }
-   auto val = origin->values;
-   auto sz = origin->sz;
-  
+  auto val = origin->values;
+  auto sz = origin->sz;
+  if(ptr == end)
+  {
+   return false;
+  }
   if(val == nullptr)
   {
-   return true;
+  return true;
   }
-  
   if (!(val <= ptr && ptr <= val +sz))
   {
     //iterator is not valid
     return false;
   }
-   return true; 
+  if(end != val + sz)
+  {
+   const_cast<ConstIterator*>(this)->end = val + sz;
+  }
+  return true; 
  } 
- 
  reference operator*()const
  {
-   if(!(is_valid()))
+   if(ptr >= end || !(is_valid()))
    {
-     throw std::runtime_error("");
+    throw std::runtime_error("");
    }
-    return *ptr;
+   return *ptr;
  }
   
  pointer operator->()const
  {
-   if(!(is_valid()))
+   if(ptr >= end || !(is_valid()))
    {
-     throw std::runtime_error("");
+    throw std::runtime_error("");
    }
-    return ptr;
+   return ptr;
  }
   
  bool operator==(const ConstIterator& other)const
  {
-    return ptr == other.ptr;
+   return ptr == other.ptr;
  }
   
  bool operator!=(const ConstIterator& other)const
  {
-    return ptr != other.ptr;
+   return ptr != other.ptr;
  }
   
  ConstIterator& operator++()
  {
-   if((is_valid()))
+   if(ptr >= end || !(is_valid()))
    {
-     ++ptr;
-   }
     return *this;
+   }
+   ++ptr;
+   return *this;
  }
   
  ConstIterator operator++(int)
@@ -395,49 +429,48 @@ class ConstIterator
  }
    
  friend difference_type  operator-(const Vector:: ConstIterator& lop,const Vector:: ConstIterator& rop) 
- {
-   return  lop.ptr-rop.ptr;
- }
- 
+{
+  return  lop.ptr-rop.ptr;
+}
 };
 
- iterator  insert(const_iterator pos,const_reference val) 
- {
-  auto  diff = pos-begin();
-  if(diff < 0 || static_cast<size_type>(diff) > sz)
-  {
-  throw  std::runtime_error ( "Iterator out of bounds");
-  }
-  size_type  current{static_cast<size_type>(diff)};
+iterator  insert(const_iterator pos,const_reference val) 
+{
+auto  diff = pos-begin();
+if(diff < 0 || static_cast<size_type>(diff) > sz)
+{
+throw  std::runtime_error ( "Iterator out of bounds");
+}
+size_type  current{static_cast<size_type>(diff)};
 
-  if(sz >= max_sz)
+if(sz >= max_sz)
 
-  reserve(max_sz * 2); // Attention special  case,if no minimum  size  is  defined
+reserve(max_sz * 2); // Attention special  case,if no minimum  size  is  defined
 
-  for(auto i{sz}; i-->current;)
-  {
-   values[i+1] = values[i];
-  }
+for(auto i{sz}; i-->current;)
+{
+values[i+1] = values[i];
+}
 
-   values[current] = val;
-   ++sz;
+values[current] = val;
+++sz;
 
-  return iterator{values + current,this};
- }
+return iterator{values + current};
+}
 
- iterator erase(const_iterator pos) 
- {
-  auto diff = pos-begin();
-  if(diff < 0 || static_cast<size_type>(diff) >= sz)
-  throw std::runtime_error("Iterator out of bounds");
-  size_type  current{static_cast<size_type>(diff)};
-  for(auto i{current};i<sz-1;++i)
-  {
-   values[i]=values[i+1];
-  }
-   --sz;
-  return  iterator{values+current,this};
- }
+iterator erase(const_iterator pos) 
+{
+auto diff = pos-begin();
+if(diff < 0 || static_cast<size_type>(diff) >= sz)
+throw std::runtime_error("Iterator out of bounds");
+size_type  current{static_cast<size_type>(diff)};
+for(auto i{current};i<sz-1;++i)
+{
+values[i]=values[i+1];
+}
+--sz;
+return  iterator{values+current};
+}
 
 
 };

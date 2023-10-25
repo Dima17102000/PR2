@@ -3,81 +3,83 @@
 #include <iostream>
 
 
-class Vector
-{
- public:
- class Iterator;
- class ConstIterator;
- using value_type = double;
- using size_type = std::size_t;
- using difference_type = std::ptrdiff_t;
- using reference = value_type&;
- using const_reference = const value_type&;
- using pointer = value_type*;
- using const_pointer = const value_type*;
- using iterator = Vector:: Iterator;
- using const_iterator = Vector:: ConstIterator;
- private: 
+ class Vector
+ {
+  public:
+  class Iterator;
+  class ConstIterator;
+  using value_type = double;
+  using size_type = std::size_t;
+  using difference_type = std::ptrdiff_t;
+  using reference = value_type&;
+  using const_reference = const value_type&;
+  using pointer = value_type*;
+  using const_pointer = const value_type*;
+  using iterator = Vector:: Iterator;
+  using const_iterator = Vector:: ConstIterator;
+  
+  private: 
  //Instance variables
   size_type sz;
   size_type max_sz;
   static constexpr size_type min_capacity = 5;
   pointer values;
- public:
+  
+  public:
  // Member Functions
- Vector(): sz{0}, max_sz{min_capacity},values{new value_type[max_sz]}
+  Vector(): sz{0}, max_sz{min_capacity},values{new value_type[max_sz]}
   {
   }
   
- Vector(size_type n): sz{0}, max_sz{n > min_capacity? n : min_capacity}, values{new value_type[max_sz]}
- {
+  Vector(size_type n): sz{0}, max_sz{n > min_capacity? n : min_capacity}, values{new value_type[max_sz]}
+  {
+  }
   
- }
+  Vector(std::initializer_list<value_type> lst): sz{lst.size()}, max_sz{sz > min_capacity? sz : min_capacity}, values{new value_type[max_sz]}
+  {
+   std::copy(lst.begin(), lst.end(), values);
+  } 
   
- Vector(std::initializer_list<value_type> lst): sz{lst.size()}, max_sz{sz > min_capacity? sz : min_capacity}, values{new value_type[max_sz]}
-{
-   std:: copy(lst.begin(), lst.end(), values);
-} 
- Vector(const Vector& other): sz{other.sz},max_sz{other.max_sz}, values{new value_type[max_sz]}
-{
+  Vector(const Vector& other): sz{other.sz},max_sz{other.max_sz}, values{new value_type[max_sz]}
+  {
    std::copy(other.values, other.values + other.sz, values);
-}
+  }
   
- ~Vector()
- {
+  ~Vector()
+  {
    delete[]values;
- }
+  }
   
- Vector& operator=(const Vector& other) 
- {
-    if (this != &other) 
-    {
+  Vector& operator=(const Vector& other) 
+  {
+   if (this != &other) 
+   {
     delete[] values;
     values = new double[other.max_sz];
     sz = other.sz;
     max_sz = other.max_sz;
     std::copy(other.values, other.values + sz, values);
-    }
-    return *this;
- }
-   
- size_type size()const
- {
+   }
+   return *this;
+  }
+  
+  size_type size()const
+  {
    return sz;
- }
+  }
   
- bool empty()const
- {
+  bool empty()const
+  {
    return sz == 0;
- }
+  }
   
- void clear()
- {
+  void clear()
+  {
    sz = 0;
- }
+  }
   
- void reserve(size_type n)
- {
+  void reserve(size_type n)
+  {
     if(n > max_sz)
     {
      pointer new_values = new value_type[n];
@@ -86,63 +88,63 @@ class Vector
      values = new_values;
      max_sz = n;
     }
- }
+  }
   
- void shrink_to_fit()
- {
-   if(sz < max_sz)
+  void shrink_to_fit()
+  {
+    if(sz < max_sz)
     {
-    max_sz = sz;
-    pointer new_values = new value_type[sz];
-    std::copy(values,values + sz, new_values);
-    delete[]values;
-    values = new_values;
+     max_sz = sz;
+     pointer new_values = new value_type[sz];
+     std::copy(values,values + sz, new_values);
+     delete[]values;
+     values = new_values;
     }
- }
- 
- void push_back(value_type x)
- {
-   if(sz == max_sz)
-   {
-    reserve(max_sz * 2);
-   }
+  }
+  
+  void push_back(value_type x)
+  {
+    if(sz == max_sz)
+    {
+     reserve(max_sz * 2);
+    }
    values[sz++] = x;
- }
- 
- void pop_back()
- {
-   if(empty())
-   {
-    throw std::runtime_error("index out of bounds");
-   }
+  }
+  
+  void pop_back()
+  {
+    if(empty())
+    {
+     throw std::runtime_error("index out of bounds");
+    }
    sz--;
- }
+  }
  
- value_type& operator[](size_type index)
-{
-   if(index >= sz)
-   {
-    throw std::runtime_error("index out of bounds");
-   }
+  value_type& operator[](size_type index)
+  {
+    if(index >= sz)
+    {
+     throw std::runtime_error("index out of bounds");
+    }
    return values[index];
-}
-
-const value_type& operator[](size_type index)const
-{
-   if(index >= sz)
-   {
-    throw std::runtime_error("index out of bounds");
-   }
+  }
+  
+  const value_type& operator[](size_type index)const
+  {
+    if(index >= sz)
+    {
+     throw std::runtime_error("index out of bounds");
+    }
    return values[index];
-}
+  }
   
   size_type capacity()const
-{
+  {
    return max_sz;
-}
+  }
   
-friend std::ostream& operator<<(std:: ostream& os, const Vector& vec)
-{
+  friend std::ostream& operator<<(std:: ostream& os, const Vector& vec)
+  {
    os << "[";
    for(size_type i{0}; i < vec.sz; i++)
    {
@@ -154,291 +156,294 @@ friend std::ostream& operator<<(std:: ostream& os, const Vector& vec)
    }
    os << "]";
    return os;
-}
-
-iterator begin()
-{
-  if(sz == 0)
-    return this->end();
-    
-  return iterator(values,this);
-}
-
-const_iterator begin() const
-{
-    return ConstIterator(values,this);
-}
-
-iterator end()
-{
-    return iterator(values+sz,this);
-}
-
-const_iterator end() const
-{
-    return ConstIterator(values+sz,this);
-}
- 
-class Iterator
-{
-  public:
-  using value_type = Vector:: value_type;
-  using reference = Vector:: reference;
-  using pointer = Vector:: pointer;
-  using difference_type = Vector:: difference_type;
-  using iterator_category = std:: forward_iterator_tag;
-  private:
-  //Instance variables
-    pointer ptr;
-    Vector* origin;
+  }
   
-  public: 
-  // Member functions
+  iterator begin()
+  {
+   if(sz == 0)
+   {
+    return this->end();
+   }
+   return iterator(values,this);
+  }
+  
+  const_iterator begin()const
+  {
+   return ConstIterator(values,this);
+  }
+  
+  iterator end()
+  {
+   return iterator(values+sz,this);
+  }
+  
+  const_iterator end()const
+  {
+   return ConstIterator(values+sz,this);
+  }
+  
+  class Iterator
+  {
+   public:
+   using value_type = Vector:: value_type;
+   using reference = Vector:: reference;
+   using pointer = Vector:: pointer;
+   using difference_type = Vector:: difference_type;
+   using iterator_category = std:: forward_iterator_tag;
+   
+   private:
+  //Instance variables
+   pointer ptr;
+   Vector* origin;
     
- Iterator()
- {
-   ptr = nullptr;
-   origin = nullptr;
- } 
- 
- bool is_valid()const
- {
+   public: 
+  // Member functions
+   Iterator()
+   {
+    ptr = nullptr;
+    origin = nullptr;
+   } 
+   
+   bool is_valid()const
+   {
   //ptr end
   //origin->values
   //origin->sz
-   if (origin == nullptr || ptr < origin->values || ptr >= origin->values + origin->sz)
-  {
-        return false;  // Iterator is not valid if origin is null
-  }
-   auto val = origin->values;
-   auto sz = origin->sz;
-   
-  
-  
-  if(val == nullptr)
-  {
-    return true;
-  }
-  
-  if (!(val <= ptr && ptr <= val +sz))
-  {
+    if (origin == nullptr || ptr < origin->values || ptr >= origin->values + origin->sz)
+    {
+     return false;  // Iterator is not valid if origin is null
+    }
+    auto val = origin->values;
+    auto sz  = origin->sz;
+    
+    if(val == nullptr)
+    {
+     return true;
+    }
+    
+    if (!(val <= ptr && ptr <= val +sz))
+    {
     //iterator is not valid
      return false;
-  }
-   return true; 
- }
- 
- Iterator(pointer ptr)
- {
-   this->ptr = ptr;
-   this->origin = nullptr;
- }
- 
- Iterator(pointer ptr,Vector* v)
- {
-   this->ptr = ptr;
-   this->origin = v;
- }
-  
- reference operator*()const // Iteration
- {
-   if(!(is_valid()))
-   {
-     throw std::runtime_error("");
+    }
+    return true; 
    }
+   
+   Iterator(pointer ptr)
+   {
+    this->ptr = ptr;
+    this->origin = nullptr;
+   }
+   
+   Iterator(pointer ptr,Vector* v)
+   {
+    this->ptr = ptr;
+    this->origin = v;
+   }
+   
+   reference operator*()const // Iteration
+   {
+    if(!(is_valid()))
+    {
+     throw std::runtime_error("");
+    }
     return *ptr;
- }
-  
- pointer operator->()const
- {
-   if(!(is_valid()))
-   {
-     throw std::runtime_error("");
    }
+   
+   pointer operator->()const
+   {
+    if(!(is_valid()))
+    {
+     throw std::runtime_error("");
+    }
     return ptr;
- }
-  
- bool operator==(const const_iterator& other)const
- {
+   }
+   
+   bool operator==(const const_iterator& other)const
+   {
     return other == *this;
- }
-  
- bool operator!=(const const_iterator& other)const
- {
+   }
+   
+   bool operator!=(const const_iterator& other)const
+   {
     return !(*this == other);
- }
+   }
+   
+   Iterator& operator++()
+   {
+    if((is_valid()))
+    {
+     ++ptr;
+    }
+    return *this;
+   }
+   
+   Iterator operator++(int)
+   {
+    Iterator temp = *this;
+    ++(*this);
+    return temp;
+   }
   
- Iterator& operator++()
- {
-  if((is_valid()))
+  operator ConstIterator() const
   {
-   ++ptr;
-  }
-   return *this;
- }
-  
- Iterator operator++(int)
- {
-  
-  Iterator temp = *this;
-  ++(*this);
-  return temp;
- }
-  
- operator ConstIterator() const
- {
    return ConstIterator(ptr,origin);
- }
-};
+  }
+ };
  
-class ConstIterator
-{
+ class ConstIterator
+ {
   public:
   using value_type = Vector:: value_type;
   using reference = Vector::const_reference;
   using pointer = Vector::const_pointer;
   using difference_type = Vector:: difference_type;
   using iterator_category = std:: forward_iterator_tag;
+   
   private:
   //Instance variables
-   pointer ptr;
-   const Vector* origin;
+  pointer ptr;
+  const Vector* origin;
   public: 
   // Member functions
   
- ConstIterator()
- {
+  ConstIterator()
+  {
    ptr = nullptr;
    origin = nullptr;
- }
+  }
   
- ConstIterator(pointer ptr)
- {
+  ConstIterator(pointer ptr)
+  {
    this->ptr = ptr;
    this->origin = nullptr;
- }
- 
- ConstIterator(pointer ptr,const Vector* v)
- {
+  }
+  
+  ConstIterator(pointer ptr,const Vector* v)
+  {
    this->ptr = ptr;
    this->origin = v;
- }
- 
- bool is_valid()const
- {
+  }
+  
+  bool is_valid()const
+  {
   //ptr end
   //origin->values
   //origin->sz
-   if (origin == nullptr || ptr < origin->values || ptr >= origin->values + origin->sz)
-  {
+    if (origin == nullptr || ptr < origin->values || ptr >= origin->values + origin->sz)
+    {
      return false;  // Iterator is not valid if origin is null
-  }
-   auto val = origin->values;
-   auto sz = origin->sz;
-  
-  if(val == nullptr)
-  {
-   return true;
-  }
-  
-  if (!(val <= ptr && ptr <= val +sz))
-  {
-    //iterator is not valid
-    return false;
-  }
-   return true; 
- } 
- 
- reference operator*()const
- {
-   if(!(is_valid()))
-   {
-     throw std::runtime_error("");
-   }
-    return *ptr;
- }
-  
- pointer operator->()const
- {
-   if(!(is_valid()))
-   {
-     throw std::runtime_error("");
-   }
-    return ptr;
- }
-  
- bool operator==(const ConstIterator& other)const
- {
-    return ptr == other.ptr;
- }
-  
- bool operator!=(const ConstIterator& other)const
- {
-    return ptr != other.ptr;
- }
-  
- ConstIterator& operator++()
- {
-   if((is_valid()))
-   {
-     ++ptr;
-   }
-    return *this;
- }
-  
- ConstIterator operator++(int)
- {
+    }
    
+    auto val = origin->values;
+    auto sz = origin->sz;
+   
+    if(val == nullptr)
+    {
+     return true;
+    }
+   
+    if (!(val <= ptr && ptr <= val +sz))
+    {
+     //iterator is not valid
+     return false;
+    }
+   return true; 
+  }
+  
+  reference operator*()const
+  {
+    if(!(is_valid()))
+    {
+     throw std::runtime_error("");
+    }
+   return *ptr;
+  }
+  
+  pointer operator->()const
+  {
+    if(!(is_valid()))
+    {
+     throw std::runtime_error("");
+    }
+   return ptr;
+  }
+  
+  bool operator==(const ConstIterator& other)const
+  {
+   return ptr == other.ptr;
+  }
+  
+  bool operator!=(const ConstIterator& other)const
+  {
+   return ptr != other.ptr;
+  }
+  
+  ConstIterator& operator++()
+  {
+    if((is_valid()))
+    {
+     ++ptr;
+    }
+   return *this;
+  }
+  ConstIterator operator++(int)
+  {
    ConstIterator temp = *this;
    ++(*this);
    return temp;
- }
-   
- friend difference_type  operator-(const Vector:: ConstIterator& lop,const Vector:: ConstIterator& rop) 
- {
+  }
+  
+  friend difference_type  operator-(const Vector:: ConstIterator& lop,const Vector:: ConstIterator& rop) 
+  {
    return  lop.ptr-rop.ptr;
- }
+  }
  
-};
+ };
 
- iterator  insert(const_iterator pos,const_reference val) 
- {
-  auto  diff = pos-begin();
-  if(diff < 0 || static_cast<size_type>(diff) > sz)
+  iterator  insert(const_iterator pos,const_reference val) 
   {
-  throw  std::runtime_error ( "Iterator out of bounds");
+    auto  diff = pos-begin();
+    if(diff < 0 || static_cast<size_type>(diff) > sz)
+    {
+     throw  std::runtime_error ( "Iterator out of bounds");
+    }
+   
+    size_type  current{static_cast<size_type>(diff)};
+
+    if(sz >= max_sz)
+    {
+     reserve(max_sz * 2); // Attention special  case,if no minimum  size  is  defined
+    }
+   
+    for(auto i{sz}; i-->current;)
+    {
+     values[i+1] = values[i];
+    }
+
+    values[current] = val;
+    ++sz;
+   return iterator{values + current,this};
   }
-  size_type  current{static_cast<size_type>(diff)};
-
-  if(sz >= max_sz)
-
-  reserve(max_sz * 2); // Attention special  case,if no minimum  size  is  defined
-
-  for(auto i{sz}; i-->current;)
+  
+  iterator erase(const_iterator pos) 
   {
-   values[i+1] = values[i];
+    auto diff = pos-begin();
+    if(diff < 0 || static_cast<size_type>(diff) >= sz)
+    {
+     throw std::runtime_error("Iterator out of bounds");
+    }
+   
+    size_type  current{static_cast<size_type>(diff)};
+   
+    for(auto i{current};i<sz-1;++i)
+    {
+     values[i]=values[i+1];
+    }
+    --sz;
+    return  iterator{values+current,this};
   }
 
-   values[current] = val;
-   ++sz;
 
-  return iterator{values + current,this};
- }
-
- iterator erase(const_iterator pos) 
- {
-  auto diff = pos-begin();
-  if(diff < 0 || static_cast<size_type>(diff) >= sz)
-  throw std::runtime_error("Iterator out of bounds");
-  size_type  current{static_cast<size_type>(diff)};
-  for(auto i{current};i<sz-1;++i)
-  {
-   values[i]=values[i+1];
-  }
-   --sz;
-  return  iterator{values+current,this};
- }
-
-
-};
+ };
 #endif

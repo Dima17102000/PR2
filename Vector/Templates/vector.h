@@ -31,7 +31,7 @@ class Vector
     {
     }
 
-    Vector(size_type n): sz{n}, max_sz{n > min_capacity? n : min_capacity}, values{new value_type[max_sz]}
+    Vector(size_type n): sz{0}, max_sz{n > min_capacity? n : min_capacity}, values{new value_type[max_sz]}
     {
   
     }
